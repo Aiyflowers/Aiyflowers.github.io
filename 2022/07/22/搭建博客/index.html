@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Aiyf | Hello-World | Aiyf</title>
+  <title>Aiyf | 搭建博客 | Aiyf</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="/css/public.css" />
   <link rel="stylesheet" href="/css/layout.css" />
@@ -20,7 +20,7 @@
   <script src="/js/jquery.pjax.min.js"></script>
   <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
   <script>
-    document.title = `Aiyf | Hello-World`
+    document.title = `Aiyf | 搭建博客`
   </script>
 <meta name="generator" content="Hexo 6.2.0"></head>
 
@@ -167,7 +167,7 @@
   const ipt = document.querySelector('#search-input')
   const btn = document.querySelector('#search-btn')
   const layer = document.querySelector('#search-layer')
-  const posts = JSON.parse(`[{"title":"Hello-World","path":"2022/07/22/Hello-World/"}]`)
+  const posts = JSON.parse(`[{"title":"搭建博客","path":"2022/07/22/搭建博客/"}]`)
   ipt.addEventListener('keyup', e => {
     if (e.key === 'Enter') {
       handleSearch()
@@ -345,7 +345,7 @@ pre:active {
 
 <div class="article-container">
   <div class="article">
-    <h1 class="article-title">Hello-World</h1>
+    <h1 class="article-title">搭建博客</h1>
     <div class="article-info">
       <div class="article-info--item">
         <div class="article-info--info">
@@ -357,15 +357,15 @@ pre:active {
             <span>标签：</span>
             
           </div>
-          <p class="article-info--date">日期：2022-07-22 21:08:05</p>
+          <p class="article-info--date">日期：2022-07-22 21:46:25</p>
         </div>
         <img src="/imgs/default-cover.webp" alt="" class="article-cover">
       </div>
     </div>
     <article class="article-content">
-      <p>重点：！！！！一切操作管理员权限下！！！！！！<br>本篇参考文章：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102592286">https://zhuanlan.zhihu.com/p/102592286</a><br>记录下我搭建过程中遇到的问题<br>注册github和下载gitbash没什么好说的·直接一路到底。<br>3.ssh远程链接github并上传测试文件<br>那么从ssh远程链接和本地库更新到远程库说起，顺便记一下操作。<br>首先我们在GIT的文件夹下创建一个codefile文件夹存放我们的库，<br>接着进入codefile文件夹，在文件夹右键打开git<br>bash here。然后输入下面指令去用rsa算法生成ssh密钥<br>ssh-keygen -t rsa<br>可以直接到相应的文件夹下寻找密钥<br>● Linux 系统：<del>&#x2F;.ssh<br>● Mac 系统：</del>&#x2F;.ssh<br>● Windows 10 ：C:&#x2F;Users&#x2F;ASUS&#x2F;.ssh<br>不过过于繁琐，我们直接使用指令<br>cd <del>&#x2F;.ssh<br>ls<br>cat id_rsa.pub<br>然后就会打开密钥，我们复制密钥内容。<br>打开github，点击右上角，再点击settings 点击左边栏ssh and gpg keys<br>点击new ssh key 不用输入标题（随意）2，将复制的密钥粘贴到下一栏空白处<br>最后点击 add ssh key即可。<br>然后回到gitbash终端测试一下是否绑定成功<br>ssh -T <a href="mailto:&#103;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;">&#103;&#105;&#x74;&#x40;&#103;&#105;&#116;&#104;&#x75;&#98;&#46;&#x63;&#111;&#109;</a><br>第一次有可能失败，提示error的话，是因为github默认端口22.我们可以测试下其他的端口是否可用。<br>ssh -T -p 443 <a href="mailto:&#x67;&#105;&#116;&#x40;&#x73;&#115;&#x68;&#x2e;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#99;&#111;&#109;">&#x67;&#105;&#116;&#x40;&#x73;&#115;&#x68;&#x2e;&#x67;&#x69;&#x74;&#104;&#117;&#98;&#46;&#99;&#111;&#109;</a><br>如果不报错了，我们直接修改配置文件<br>vim ~&#x2F;.ssh&#x2F;config<br>输入上条指令后，我们点击下键盘上的 i<br>然后复制下面内容，右键粘贴！<br>Host github.com<br>Hostname ssh.github.com<br> Port 443<br>然后粘贴进去后，点击ESC，输入：wq 后即可<br>——-本处参考博客：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/521340971#">https://zhuanlan.zhihu.com/p/521340971#</a>:</del>:text&#x3D;ssh%3A%20connect%20to%20host%20github.com%20port%2022%3A%20Connection,%E7%9A%8422%E7%AB%AF%E5%8F%A3%E8%A2%AB%E6%8B%92%E7%BB%9D%E4%BA%86%E3%80%82%20%E5%8E%9F%E6%9C%AC%E4%BB%A5%E4%B8%BA%20github.com%20%E6%8C%82%E4%BA%86%EF%BC%8C%E4%BD%86%E6%98%AF%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AE%20github.com%20%E4%B8%80%E5%88%87%E6%AD%A3%E5%B8%B8%E3%80%82%20%E7%BD%91%E4%B8%8A%E6%90%9C%E7%B4%A2%E8%BF%99%E4%B8%AA%E6%8A%A5%E9%94%99%EF%BC%8C%E5%8F%91%E7%8E%B0%E5%BE%88%E5%A4%9A%E4%BA%BA%E9%81%87%E5%88%B0%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%8C%E5%A4%A7%E6%A6%82%E6%9C%892%E4%B8%AA%E5%8E%9F%E5%9B%A0%E5%92%8C%E5%AF%B9%E5%BA%94%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A%20%E4%BD%BF%E7%94%A8GitHub%E7%9A%84443%E7%AB%AF%E5%8F%A3</p>
+      <p>重点：！！！！一切操作管理员权限下！！！！！！<br>本篇参考文章：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102592286">https://zhuanlan.zhihu.com/p/102592286</a><br>记录下我搭建过程中遇到的问题<br>注册github和下载gitbash没什么好说的·直接一路到底。<br>3.ssh远程链接github并上传测试文件<br>那么从ssh远程链接和本地库更新到远程库说起，顺便记一下操作。<br>首先我们在GIT的文件夹下创建一个codefile文件夹存放我们的库，<br>接着进入codefile文件夹，在文件夹右键打开git<br>bash here。然后输入下面指令去用rsa算法生成ssh密钥<br>ssh-keygen -t rsa<br>可以直接到相应的文件夹下寻找密钥<br>● Linux 系统：<del>&#x2F;.ssh<br>● Mac 系统：</del>&#x2F;.ssh<br>● Windows 10 ：C:&#x2F;Users&#x2F;ASUS&#x2F;.ssh<br>不过过于繁琐，我们直接使用指令<br>cd <del>&#x2F;.ssh<br>ls<br>cat id_rsa.pub<br>然后就会打开密钥，我们复制密钥内容。<br>打开github，点击右上角，再点击settings 点击左边栏ssh and gpg keys<br>点击new ssh key 不用输入标题（随意）2，将复制的密钥粘贴到下一栏空白处<br>最后点击 add ssh key即可。<br>然后回到gitbash终端测试一下是否绑定成功<br>ssh -T <a href="mailto:&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#98;&#46;&#99;&#111;&#109;">&#x67;&#105;&#x74;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#98;&#46;&#99;&#111;&#109;</a><br>第一次有可能失败，提示error的话，是因为github默认端口22.我们可以测试下其他的端口是否可用。<br>ssh -T -p 443 <a href="mailto:&#103;&#105;&#116;&#x40;&#x73;&#115;&#104;&#46;&#103;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#99;&#x6f;&#x6d;">&#103;&#105;&#116;&#x40;&#x73;&#115;&#104;&#46;&#103;&#x69;&#x74;&#x68;&#117;&#x62;&#46;&#99;&#x6f;&#x6d;</a><br>如果不报错了，我们直接修改配置文件<br>vim ~&#x2F;.ssh&#x2F;config<br>输入上条指令后，我们点击下键盘上的 i<br>然后复制下面内容，右键粘贴！<br>Host github.com<br>Hostname ssh.github.com<br> Port 443<br>然后粘贴进去后，点击ESC，输入：wq 后即可<br>——-本处参考博客：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/521340971#">https://zhuanlan.zhihu.com/p/521340971#</a>:</del>:text&#x3D;ssh%3A%20connect%20to%20host%20github.com%20port%2022%3A%20Connection,%E7%9A%8422%E7%AB%AF%E5%8F%A3%E8%A2%AB%E6%8B%92%E7%BB%9D%E4%BA%86%E3%80%82%20%E5%8E%9F%E6%9C%AC%E4%BB%A5%E4%B8%BA%20github.com%20%E6%8C%82%E4%BA%86%EF%BC%8C%E4%BD%86%E6%98%AF%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AE%20github.com%20%E4%B8%80%E5%88%87%E6%AD%A3%E5%B8%B8%E3%80%82%20%E7%BD%91%E4%B8%8A%E6%90%9C%E7%B4%A2%E8%BF%99%E4%B8%AA%E6%8A%A5%E9%94%99%EF%BC%8C%E5%8F%91%E7%8E%B0%E5%BE%88%E5%A4%9A%E4%BA%BA%E9%81%87%E5%88%B0%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%8C%E5%A4%A7%E6%A6%82%E6%9C%892%E4%B8%AA%E5%8E%9F%E5%9B%A0%E5%92%8C%E5%AF%B9%E5%BA%94%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A%20%E4%BD%BF%E7%94%A8GitHub%E7%9A%84443%E7%AB%AF%E5%8F%A3</p>
 <p>接下来就是我们拉取远程仓库并提交测试文件的环节了！</p>
-<p>先去github上打开你的项目，点击code 选择ssh 复制第一个网址<br>然后进入codefile文件夹下 打开gitbash 输入 git clone 复制的网址<br> 你会看到有个文件夹被复制到codefile下<br>我们进入复制下来的文件夹<br>我们新建一个text.txt文本文件：内容最好随便输入点<br>然后进入终端输入以下指令去查看本地库更新<br>git status<br>然后输入<br>git add text.txt<br>再输入<br>git commit -m “commit text file”<br>此时你是第一次输入，它会输出一大串提示你输入名字和邮箱<br>我们只需一步一步来：<br>先输入邮箱（你自己github邮箱）<br>git config –global user.email”<a href="mailto:&#49;&#55;&#x34;&#x34;&#53;&#x33;&#x32;&#53;&#52;&#55;&#64;&#x71;&#x71;&#x2e;&#x63;&#x6f;&#109;">&#49;&#55;&#x34;&#x34;&#53;&#x33;&#x32;&#53;&#52;&#55;&#64;&#x71;&#x71;&#x2e;&#x63;&#x6f;&#109;</a>“<br>再输入名字（最好你自己的github名字或者真名）<br>git config –global user.name”Aiyflowers”<br>接着输入以下指令去查看提交记录，如果没有显示commit text file<br>git log<br>我们就需要再次进行提交<br>git commit -m “commit text file”<br>再次git log 验证<br>再输入以下指令查看仓库状态<br>git status<br>输入以下指令将本地文件同步远程<br>git push origin main<br>接着回到github刷新，发现已经存在text.txt，证明测试成功</p>
+<p>先去github上打开你的项目，点击code 选择ssh 复制第一个网址<br>然后进入codefile文件夹下 打开gitbash 输入 git clone 复制的网址<br> 你会看到有个文件夹被复制到codefile下<br>我们进入复制下来的文件夹<br>我们新建一个text.txt文本文件：内容最好随便输入点<br>然后进入终端输入以下指令去查看本地库更新<br>git status<br>然后输入<br>git add text.txt<br>再输入<br>git commit -m “commit text file”<br>此时你是第一次输入，它会输出一大串提示你输入名字和邮箱<br>我们只需一步一步来：<br>先输入邮箱（你自己github邮箱）<br>git config –global user.email”<a href="mailto:&#x31;&#x37;&#x34;&#52;&#x35;&#51;&#50;&#53;&#x34;&#x37;&#64;&#x71;&#113;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x37;&#x34;&#52;&#x35;&#51;&#50;&#53;&#x34;&#x37;&#64;&#x71;&#113;&#x2e;&#99;&#111;&#x6d;</a>“<br>再输入名字（最好你自己的github名字或者真名）<br>git config –global user.name”Aiyflowers”<br>接着输入以下指令去查看提交记录，如果没有显示commit text file<br>git log<br>我们就需要再次进行提交<br>git commit -m “commit text file”<br>再次git log 验证<br>再输入以下指令查看仓库状态<br>git status<br>输入以下指令将本地文件同步远程<br>git push origin main<br>接着回到github刷新，发现已经存在text.txt，证明测试成功</p>
 <p>4.购买域名<br>哈哈哈，这个我推荐阿里云第一年才1元钱，第二年88我哭死<br>秀一下我的域名，如果你不在乎美观的话，选择个便宜点xyz后缀，续费也便宜。我是为了美观哈哈</p>
 <p>没什么好说的，直接看文章开头的博客即可，其实自己摸索也可以。很简单，我是突发奇想，买了域名才开始有想法搞个博客的。<br>5.node.js和hexo<br>配置node.js<br>我们下载好node.js后直接安装到F盘或者D盘，看你心情（记得文件夹名为nodejs）<br>然后进入nodejs文件夹下，可以看到我们安装的node.js文件<br>在 nodejs 文件夹中新建两个空文件夹 node_cache、node_global<br>然后用管理员权限打开cmd在此文件夹下，输入以下指令<br>.\npm config set prefix “F:\nodejs\node_global”<br>.\npm config set cache “F:\nodejs\node_cache”<br>然后静静等待一会。<br>搭配环境变量和系统变量就直接看它的操作即可<br>设置环境变量：win10系统 –&gt; 打开控制面板 –&gt; 系统 –&gt;高级系统设置 –&gt; 环境变量 ，然后在系统变量中新建一个变量名为“NODE_PATH”，值为“D:\nodejs\node_global\node_modules”，如下图：</p>
 <p>然后编辑用户变量里的Path，将相应npm的路径改为：D:\nodejs\node_global，如下图：</p>
