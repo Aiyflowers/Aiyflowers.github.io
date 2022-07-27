@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Aiyf | first——AWD | Aiyf</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/nprogress.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  
+  <script src="/js/nprogress.js"></script>
+
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `Aiyf | first——AWD`
+  </script>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"搭建博客","path":"2022/07/22/搭建博客/"},{"title":"first——AWD","path":"2022/07/27/first——AWD/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Aiyf</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">衰小孩</span>
+          <span class="main-left--tag">明非</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“孤独是人生常态”</p>
+        <p>“修短随化，情随事迁”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/Aiyflowers/Aiyflowers.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>1</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>1</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>1 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>2 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>6天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v0.0.0</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <style>
+pre::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+  background-color:#F5F5F5;
+}
+/*定义滚动条轨道
+内阴影+圆角*/
+pre::-webkit-scrollbar-track {
+  background-color:#F5F5F5;
+}
+/*定义滑块
+内阴影+圆角*/
+pre::-webkit-scrollbar-thumb {
+  background-color: rgb(69, 83, 100);
+}
+
+pre:active {
+  background-color: rgb(81, 95, 116);
+}
+</style>
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">first——AWD</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          <div class="article-info--categories">
+            <span>分类：</span>
+            <a class="category-link" href="/categories/AWD%E6%94%BB%E9%98%B2%E5%AD%A6%E4%B9%A0/">AWD攻防学习</a>
+          </div>
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/%E8%8F%9C%E9%B8%9F%E5%88%9D%E5%AD%A6/" rel="tag">菜鸟初学</a>
+          </div>
+          <p class="article-info--date">日期：2022-07-27 22:30:04</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content">
+      <p>思维导图：</p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/attachments/yuque/0/2022/mmap/29434471/1657850686951-98222dfa-a4bd-4235-9b4a-8b909ef50dcb.mmap">AWD攻防.mmap</a></p>
+<h3 id="首先说明："><a href="#首先说明：" class="headerlink" title="首先说明："></a>首先说明：</h3><p>如果有指令错误，先检查是否为英文，再检查是否有; 除了（use mysql）其余的mysql指令基本都要;   再次强调！！！指令我基本都试过一遍，如果出现问题，百度查找，或者自检。</p>
+<h3 id="服务器都有什么？"><a href="#服务器都有什么？" class="headerlink" title="服务器都有什么？"></a>服务器都有什么？</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/67e51b6e13f487300800c99c6347f6d8.png" alt="image.png"><br>对第一个思维导图的复现</p>
+<h3 id="mysql内容复现"><a href="#mysql内容复现" class="headerlink" title="mysql内容复现"></a>mysql内容复现</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/5d041a7e9250e552e4d611b978d72f13.png" alt="image.png"></p>
+<h4 id="启动和关闭和重启mysql服务"><a href="#启动和关闭和重启mysql服务" class="headerlink" title="启动和关闭和重启mysql服务"></a>启动和关闭和重启mysql服务</h4><blockquote>
+<p>启动：       service mysql start<br>重新启动：service mysql restart<br>关闭：         service mysql stop<br>下面的有回显<br>&#x2F;etc&#x2F;init.d&#x2F;mysql stop #关闭服务<br>&#x2F;etc&#x2F;init.d&#x2F;mysql start  #重启服务</p>
+</blockquote>
+<h4 id="查看mysql密码并修改mysql密码"><a href="#查看mysql密码并修改mysql密码" class="headerlink" title="查看mysql密码并修改mysql密码"></a>查看mysql密码并修改mysql密码</h4><p>第一种方法：参考博客：<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1142525">https://cloud.tencent.com/developer/article/1142525</a><br>使用以下指令去查看mysql初始化密码：</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">cat</span> /etc/mysql/debian.cnf <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>接着我们利用初始化账号和密码登陆上之后将其修改掉</p>
+<blockquote>
+<p>UPDATE mysql.user SET authentication_string&#x3D;PASSWORD(‘root’), PLUGIN&#x3D;’mysql_native_password’ WHERE USER&#x3D;’root’;#修改配置和密码<br>&#x2F;etc&#x2F;init.d&#x2F;mysql stop#关闭服务<br>&#x2F;etc&#x2F;init.d&#x2F;mysql start#重启服务</p>
+</blockquote>
+<p>—————————————————方法分割线———————————————————<br>第二种方法：借鉴博客：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weicao1990/article/details/89342146">https://blog.csdn.net/weicao1990/article/details/89342146</a><br>或者我们执行以下代码去更改mysql配置文件实现免密码登录</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">vim</span> /etc/mysql/mysql.conf.d/mysqld.cnf
+<span class="token comment">#在mysqld这一块代码中写入下面一行代码</span>
+skip-grant-tables<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>接着再次进行更改密码</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token number">1</span> use mysql<span class="token punctuation">;</span>   然后敲回车
+<span class="token number">2</span> update user <span class="token builtin class-name">set</span> <span class="token assign-left variable">authentication_string</span><span class="token operator">=</span>password<span class="token punctuation">(</span><span class="token string">"你的密码"</span><span class="token punctuation">)</span> where <span class="token assign-left variable">user</span><span class="token operator">=</span><span class="token string">"root"</span><span class="token punctuation">;</span>  然后敲回车
+<span class="token number">3</span> flush privileges<span class="token punctuation">;</span>  然后敲回车<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>接着如果发现还是登陆不上。<br>use mysql<br><em><strong>select user,plugin from user;       #去查看属性，发现root是auto。执行下面指令修改密码和属性</strong></em></p>
+<blockquote>
+<p>update user set authentication_string&#x3D;password(“fmlmysql”),plugin&#x3D;’mysql_native_password’ where user&#x3D;’root’;</p>
+</blockquote>
+<h4 id="完全卸载和安装mysql："><a href="#完全卸载和安装mysql：" class="headerlink" title="完全卸载和安装mysql："></a>完全卸载和安装mysql：</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">rm</span> /var/lib/mysql/ -R
+<span class="token function">sudo</span> <span class="token function">rm</span> /etc/mysql/ -R
+<span class="token function">sudo</span> <span class="token function">apt-get</span> autoremove mysql* --purge
+<span class="token function">sudo</span> <span class="token function">apt-get</span> remove apparmor<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">sudo</span> <span class="token function">apt-get</span> update
+<span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> mysql-server<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<h4 id="mysql登录和修改密码："><a href="#mysql登录和修改密码：" class="headerlink" title="mysql登录和修改密码："></a>mysql登录和修改密码：</h4><p>我们无密码强行登录mysql后<br>use mysql<br><em><strong>select user,plugin,password from user;</strong></em><br><em><strong>去查看属性和密码</strong></em><br>一个可以正常登录和修改的mysql它的配置应该是<br><img src="https://img-blog.csdnimg.cn/img_convert/befe6159e39ba58e100d0f1940284cc3.png" alt="image.png"><br>plugin是这样的，密码是加密的。我设置的123456<br>去<a target="_blank" rel="noopener" href="https://www.cmd5.com/">https://www.cmd5.com/</a>解密下即可得到！<br><img src="https://img-blog.csdnimg.cn/img_convert/ec222edd854c1a43d790182bfb52b502.png" alt="image.png"></p>
+<h4 id="mysql备份和还原："><a href="#mysql备份和还原：" class="headerlink" title="mysql备份和还原："></a>mysql备份和还原：</h4><blockquote>
+<p>假如你还没登陆，不知道存在什么库名。先登录修改密码再做备份也不迟。</p>
+</blockquote>
+<p>如果不知道密码，参考AWD靶机环境搭建(linux)这一篇mysql相关</p>
+<blockquote>
+<p>以下操作均在不登陆mysql时使用，因为下面操作的执行会自动让你短暂登录<br>并且我们备份和还原的基础都是需要mysql中具有这个数据库。<br>备份：         mysqldump -u user -p 数据库名 &gt; 1.sql<br>删除数据库 ：drop database 数据库名<br>创建数据库：create database 数据库名<br>还原 ：            mysql -u user -p 数据表名 &lt; 1.sql</p>
+</blockquote>
+<h4 id="数据库远程登录（禁止远程登录）："><a href="#数据库远程登录（禁止远程登录）：" class="headerlink" title="数据库远程登录（禁止远程登录）："></a>数据库远程登录（禁止远程登录）：</h4><p>一般我们登录是root@localhost的方式去登陆的<br>假如我们获取了服务器的ip地址（域名）以及端口号<br>我们可以直接远程登录它的数据库从而获取我们想要的信息。</p>
+<blockquote>
+<p>mysql -h ip_addr -P 3306 -u root -p123456</p>
+</blockquote>
+<p>那么我们为了保护自己的靶机，肯定不可以让他这么轻易的登录上数据库。所以我们要做些手段去禁止远程登录，防止被攻击。<br>但是AWD我觉得赛方会在数据库的配置信息这里进行更改为可以远程登录，方便它在数据库里放flag，供其他攻击方获取。所以我们最好查看下靶机的属性，如果开放了远程登录，立即修改掉！</p>
+<blockquote>
+<p>先登录自己的mysql后，执行以下两条命令去去查看是否为本地登录<br>use mysql;<br>select host,user from user;</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/93d4780e625bac2653f31513d36427be.png" alt="image.png"><br>显示为localhost即为本地才可以登录。’%’为所有用户都可登录</p>
+<blockquote>
+<p>修改为远程登录的方式：<br>登录mysql后<br>use mysql;<br>update user set host&#x3D;’%’ where user&#x3D;’root’ and host&#x3D;’localhost’;<br>flush privileges;                    #刷新权限表，使配置生效</p>
+</blockquote>
+<p>很离谱的是我苦苦复现不了，报错。那就不复现了，估计是我电脑环境的问题。<br>禁止远程登陆的方式：</p>
+<blockquote>
+<p>登陆后<br>use mysql                #打开mysql数据库</p>
+<p>#将host设置为localhost表示只能本地连接mysql</p>
+<p>update user set host&#x3D;’localhost’ where user&#x3D;’root’;</p>
+<p>flush privileges;        #刷新权限表，使配置生效</p>
+</blockquote>
+<h4 id="mysql权限管理读写权限："><a href="#mysql权限管理读写权限：" class="headerlink" title="mysql权限管理读写权限："></a>mysql权限管理读写权限：</h4><p>本文参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_40334963/article/details/104517738">https://blog.csdn.net/qq_40334963&#x2F;article&#x2F;details&#x2F;104517738</a><br>假如我们在比赛的时候不小心知道了对方数据库的密码，那么我们又不小心登录了上去，一般的数据库都具有读权限，假如数据库中有flag，那我们可以直接读取到。或者读取<del>&#x2F;etc&#x2F;password（</del>&#x2F;etc&#x2F;passwd<del>）</del>这个路径去查看我们用户的密码等</p>
+<blockquote>
+<p>查询数据库中可能的flag<br><strong>select * from 表名 where 字段 like ‘%flag%’;</strong></p>
+</blockquote>
+<p>那么最重要的就是读取&#x2F;etc&#x2F;password了。也就是利用数据库读取路径。这个运用于当对方数据库中不存在flag或者有用信息，我们可以尝试去读取对方靶机的信息比如&#x2F;etc&#x2F;password下存放的账户密码，从而远程登陆它的靶机。跟pwn getshell有一拼。但是呢万事没有这么顺利，mysql读写权限不是万能的，他也受secure_file_priv参数控制，它的值限制load data,select … outfile,load_file()函数可作用的文件位置。<br>我们可以通过登录数据库后输入以下指令去查看它的限制信息</p>
+<blockquote>
+<p>show global variables like “%secure%”;</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/5de20b374e8fa41dc8fca4b60c9623d7.png" alt="image.png"><br>可以看到很多安全属性，而我们读写文件需要关注的就是secure_file_priv，这个重点关注下。它的value代表不同的”权限”吧.<br><img src="https://img-blog.csdnimg.cn/img_convert/c6ea400d7dd6cf7de7b1b65fcbf2f7c7.png" alt="image.png"><br>那么我这台机器的读写权限是第一种，按理说可以随便读取写入任意文件！！但是呢其实它还受额外限制！我直接粘贴了，师傅总结的较好。</p>
+<blockquote>
+<ol>
+<li>secure_file_priv值允许对该路径下的文件进行操作</li>
+<li>当前数据库用户对文件有读权限</li>
+<li>当前数据库用户拥有file权限<br>查看方法举例：mysql&gt; show grants for root@localhost;</li>
+<li>知道文件的完整路径</li>
+<li>文件大小小于max_allowed_packet。load_file()函数受到这个值的限制。<br>查看方法：mysql&gt; show global variables like ‘max_allowed%’;<br>修改方法：mysql&gt; set global max_allowed_packet &#x3D; 5_1024_1024;</li>
+</ol>
+</blockquote>
+<p>我第一次直接去读取是失败了的，原因未知。<br>那么先输入3的指令看下我有没有权限吧，输出了奇怪的东西，翻译一下大概就是通过mysql的某个参数和我的root用户密码(加密后)拥有权限。那么这条路通了，我们接着下一条。<br><img src="https://img-blog.csdnimg.cn/img_convert/6aa9ae7a9f4f9aa7a0b38a2cecb50f75.png" alt="image.png"><br>max_allowed_packet是最大允许传输包的大小。我们可以通过以下指令去查看是否是传输包过于小导致无法输出读取我们想要的结果。</p>
+<blockquote>
+<p>mysql&gt; show global variables like ‘max_allowed%’;</p>
+</blockquote>
+<p>可以看到大小为：16777216。也就是mysql默认的16mb。按理说这个大小读取完全足够了呀？为什么会出错呢？大小不够吗？我们直接更改为最大1GB，也就是：1073741824，还是不可以！！！（ps：注意范围不是越大越好，32mb即可,并且修改数值必须为1024整数倍）</p>
+<blockquote>
+<p>Show global variables like ‘max_allowed_packet’  查看是否修改成功</p>
+</blockquote>
+<p>。。。就在我感到迷茫的时候，发现机器没问题是我脑子有问题。。。<br>路径是这个&#x2F;etc&#x2F;passwd，不是&#x2F;etc&#x2F;password。。。那么接着就成功了。<br><img src="https://img-blog.csdnimg.cn/img_convert/6b7b36d7f63b8746826bf5a9fe3c0bdc.png" alt="image.png"><br>我们寻找&#x2F;bin&#x2F;bash这种的或者&#x2F;bin&#x2F;zsh的信息。</p>
+<blockquote>
+<p>emm，其实到这里我才发现读取&#x2F;etc&#x2F;passwd没什么用，因为这只是用户名，我们需要的是&#x2F;etc&#x2F;shadow里储存的密码。。但是&#x2F;etc&#x2F;shadow只有root用户才可以访问，我们是没有读文件权限的。不过我们比赛可以做些尝试尽可能，如果可以进行这一步的话，直接起飞。</p>
+</blockquote>
+<p>那么我们回到整题，如果上面的secure_file_priv值不允许我们对路径访问呢？那就不办！如果是指定路径还有活路可走，null直接等于换条路走。<br>指定路径上文博客有提到，看不大懂，而且远程mysql不可以使用，实用性不强。null的话，我们需要修改mysql配置文件，比赛基本做不到攻击，我们比赛修改mysql配置文件的安全属性达到防御效果即可。</p>
+<blockquote>
+<p>vim &#x2F;etc&#x2F;mysql&#x2F;my.cnf<br>在mysqld一行下添加<br>secure_file_priv&#x3D;’NULL’   </p>
+</blockquote>
+<p>达到较好安全防护！！！</p>
+<p>这篇博客里有提到：<a target="_blank" rel="noopener" href="https://blog.csdn.net/h4ck0ne/article/details/50570801">https://blog.csdn.net/h4ck0ne/article/details/50570801</a><br>那么具有写权限就更牛掰了，我们直接向对方的数据库写入一个一句话木马，然后冰蝎连接不是直接very good了。限制自然也有。</p>
+<blockquote>
+<ol>
+<li>secure_file_priv值允许对该路径下的文件进行操作</li>
+<li>当前数据库用户对文件有写权限</li>
+<li>当前数据库用户拥有file权限<br>查看方法举例：mysql&gt; show grants for root@localhost;</li>
+<li>知道文件的完整路径</li>
+<li>目标文件不存在</li>
+</ol>
+</blockquote>
+<p>假如我们知道路径，可以直接写入一句话木马进去</p>
+<blockquote>
+<p>select “<?php @eval($_POST[1]);phpinfo()?>“ into outfile “&#x2F;var&#x2F;www&#x2F;html”</p>
+</blockquote>
+<p>这里还有一篇文章关于三个写文件的办法，不只是outfile。<a target="_blank" rel="noopener" href="https://www.jb51.net/article/139858.htm">https://www.jb51.net/article/139858.htm</a><br>emm，这个虽然我也很想深入研究，但是毕竟没web基础。就此作罢。</p>
+<p> 还有一种办法，老师没培训，但是上方博客讲解了。<br>就是通过general_log和general_log_file实现文件的读写<br>mysql所有查询数据都会记录在general_log_file指定的文件中，有该文件的读权限。这个参数一般是关闭的，我们可以使用以下指令去查看下</p>
+<blockquote>
+<p>show global variables like ‘%genera%’;</p>
+</blockquote>
+<p>可以看到默认关闭了。我们需要先将其打开，并且将第二个参数的value改为一个执行php文件的路径（不清楚php文件是否必须是预先存在）<br><img src="https://img-blog.csdnimg.cn/img_convert/0c42af52a998ba03207003d3e529e1c0.png" alt="image.png"></p>
+<blockquote>
+<p>打开general_log开关：<br>Set global general_log&#x3D;’on’;<br>设置general_log_file储存路径：<br>Set global general_log_file&#x3D;’&#x2F;tmp&#x2F;shell.php’;<br>接着发送一句话木马<br>select ‘<?php @eval($_POST["cmd"]); ?>‘;</p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/476fffdc1e22025caa132e21142a64e4.png" alt="image.png"><br>可以看到一句话木马被解析执行。<br><img src="https://img-blog.csdnimg.cn/img_convert/f9eb9cd61ed73b5047c466d9ee960059.png" alt="image.png"><br>文件也被写入了我们设定好的路径下。（注意比赛时我们需要根据自己方路径去推算对方路径，从而连接上木马。）这种方法我觉得是最实用的作为一个初学者角度，因为我们可以登录mysql去修改参数，而不是获得系统权限。</p>
+<p>那么从攻击角度提供了这么几种方法，从防御角度再来看，我们励志把龟壳流发挥到极致！那么本文结束后，我会总结一个流程，大概是我目前所能想到的防御手段流程吧</p>
+<h3 id="web安全复现："><a href="#web安全复现：" class="headerlink" title="web安全复现："></a>web安全复现：</h3><p>首先备份文件。因为如果我们龟壳流还是被打烂了。我们的服务器的源代码根目录下被种满了木马，我们有点绝望时候，更有甚者，我们被别人删库跑路了，那我们要赶快再重新把完整的源代码上传上去，依次躲避check机制。</p>
+<blockquote>
+<p>tar -zcvf web.tar.gz &#x2F;var&#x2F;www&#x2F;html&#x2F;*</p>
+</blockquote>
+<p>到时候解压即可。（提一下，mobaxterm好用的飞起。）<br>接着为了找出我们服务器源代码的后门，我们复制整个源代码到windows下，然后拖到D盾里面去查找后门，来进一步的删除后门。以防被趁机攻击。或者利用seay源码审计系统。可以看到后门很多，因为我搭的练习web靶场的后门。<br><img src="https://img-blog.csdnimg.cn/img_convert/c17bdeb2b93c0753063d7154ae4d4ca2.png" alt="image.png"><br><img src="https://img-blog.csdnimg.cn/img_convert/f39cda4f935fe945ca118dec8982cf82.png" alt="image.png"><br>我们也可以在当前目录下使用ls-la去查找隐藏文件<br>然后找到明显后门的话且删除不影响整个前端页面显示，直接rm -rf filename</p>
+<blockquote>
+<p>find &#x2F;var&#x2F;www&#x2F;html -name “.*” -print</p>
+</blockquote>
+<p>我们也可以用这条指令做到精确查找。</p>
+<blockquote>
+<p>还可以禁用危险函数—-复现不了，因为我的kali上没环境，留个思路。<br>在万不得已，或者确定这些函数禁用对服务没有影响的情况下。<br>(&#x2F;etc&#x2F;php5&#x2F;cli&#x2F;php.ini)php.ini配置disable_function批量禁用危险函数</p>
+</blockquote>
+<p> 避免文件上传漏洞</p>
+<blockquote>
+<p>php.ini:<br>修改allow_url_fopen&#x3D;off<br>allow_url_include&#x3D;Off</p>
+</blockquote>
+<p>修改文件上传的路径为无法解析的目录<br>避免sql—-跳过</p>
+<h3 id="端口扫描和目录扫描–"><a href="#端口扫描和目录扫描–" class="headerlink" title="端口扫描和目录扫描–"></a>端口扫描和目录扫描–</h3><p>先对目标ip进行端口扫描，查看开启什么业务，是否存在漏洞。</p>
+<blockquote>
+<p>nmap -sV ip</p>
+</blockquote>
+<p>对其进行目录扫描，<br>我们直接在kali下 使用以下命令对其扫描获取有用信息</p>
+<blockquote>
+<p>dirserch -u ip</p>
+</blockquote>
+<p>感觉挺水的，并没有什么可写的，因为太菜了</p>
+<h3 id="linux应急响应"><a href="#linux应急响应" class="headerlink" title="linux应急响应"></a>linux应急响应</h3><p>参考–视频sxf<br>参考教程：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xiets/p/14228422.html">https://www.cnblogs.com/xiets/p/14228422.html</a><br>进程排查寻找可疑进程并杀死可疑进程</p>
+<h4 id="进程排查："><a href="#进程排查：" class="headerlink" title="进程排查："></a>进程排查：</h4><blockquote>
+<p>查看系统资源占用：top<br>查看进程：ps -ef<br>根据pid查看进程详细信息：lsof -p pid<br>查看启动时间： ps -p pid -o lstart<br>查看进程可执行文件：ls -la &#x2F;proc&#x2F;PID&#x2F;exe<br>查看进程树：pstree<br>杀死进程：kill -9 pid</p>
+</blockquote>
+<h4 id="文件排查："><a href="#文件排查：" class="headerlink" title="文件排查："></a>文件排查：</h4><blockquote>
+<p>查找根目录下修改时间小于1天的文件：<br>find &#x2F; -mtime -1  （mmin 表示分钟）<br>我们也可将其改为ctime，atime，分别意为创建时间和访问时间（create time ，access time），都可以灵活变通<br>可以结合find命令一起查找<br>find 路径 -mtime -1 -name *.php<br>排查系统文件是否出问题：根据修改时间，创建时间，大小等。<br>ls -atlS &#x2F;usr&#x2F;sbin |head -30 （列出前30）</p>
+</blockquote>
+<h4 id="网络排查："><a href="#网络排查：" class="headerlink" title="网络排查："></a>网络排查：</h4><blockquote>
+<p>查看已经建立的连接：<br>netstat -antulp |grep ESTABLISHED<br>-a：完全显示 -n：数字显示 -t：tcp显示 -u：udp显示 -l：列表显示 -p：pid<br>ESTABLISHED：已经建立的连接<br>查看反弹连接：<br>netstat -antulp |grep bash<br>查看本机开放的端口：<br>netstat -antulp<br>查看某一端口的具体应用：<br>lsof -i：端口号</p>
+</blockquote>
+<h4 id="用户排查："><a href="#用户排查：" class="headerlink" title="用户排查："></a>用户排查：</h4><blockquote>
+<p>查看uid或gid为0的用户(正常情况下一定为root用户)：<br>grep :0 &#x2F;etc&#x2F;passwd<br>查看&#x2F;etc&#x2F;passwd文件的最后修改记录（可以显示时间）：<br>stat &#x2F;etc&#x2F;passwd<br>统计所有用户的shell相关信息：<br>cat &#x2F;etc&#x2F;passwd | awk -F: ‘{print $7}’ |sort|uniq -c<br>查看有登陆权限的用户：<br>cat &#x2F;etc&#x2F;passwd |grep bash<br>查看用户登录时间：<br>last 或者 lastlog<br>查看当前登录会话：w （也就是who）（tty 本地登陆 pts 远程登录）<br>查看允许sudo的用户：<br>more &#x2F;etc&#x2F;sudoers |egrep -v “^#|^$”<br>查看那些用户归属组：（ps：组名在上一步查看sudo。会显示 %组名）<br>grep 组名 &#x2F;etc&#x2F;group<br><img src="https://img-blog.csdnimg.cn/img_convert/a1193b4e219eca841655afec4f9ce2b3.png" alt="image.png"></p>
+</blockquote>
+<h4 id="历史命令："><a href="#历史命令：" class="headerlink" title="历史命令："></a>历史命令：</h4><p>history<br>这个历史命令存储在home目录的.bash_history文件中<br>也可以通过 cat ~&#x2F;.bash_history 去查看，如果我们是入侵者，直接rm -rf此文件。</p>
+<h4 id="持久化查询（定时任务-开机启动项检查-）："><a href="#持久化查询（定时任务-开机启动项检查-）：" class="headerlink" title="持久化查询（定时任务-开机启动项检查-）："></a>持久化查询（定时任务-开机启动项检查-）：</h4><p>:::info<br>定时任务排查：<br>crontab -l<br>crontab -r 删除当前任务<br><img src="https://img-blog.csdnimg.cn/img_convert/b5c8e1f5ec69d66e82e11477083ab9ac.png" alt="image.png"></p>
+<p>:::</p>
+<p>:::info<br>开机启动项排查：<br><img src="https://img-blog.csdnimg.cn/img_convert/7da3119e37ce92636a78f51118ae72b7.png" alt="image.png"><br>runlevel       查看运行级别<br><img src="https://img-blog.csdnimg.cn/img_convert/939aaa41e7a159dbc3c79cbe7f0f2701.png" alt="image.png"><br>开机服务检查：<br>chkconfig –list<br>大部分机器上估计这命令都被取代了，也没提供安装渠道，在我几番搜寻后，发现还是github上资源丰富。使用dnf install chkconfig此命令安装</p>
+<p>:::</p>
+<h3 id="linux日志分析："><a href="#linux日志分析：" class="headerlink" title="linux日志分析："></a>linux日志分析：</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/ee579380307b4dc60f04c5c73f6be184.png" alt="image.png"></p>
+<blockquote>
+<p>定位有多少ip在爆破主机的root账号：<br>grep “Failed password for root” &#x2F;var&#x2F;log&#x2F;secure | awk ‘{print $11}’ | sort | uniq -c|sort -nr|more<br>定位有那些ip在爆破：<br>grep “Failed password” &#x2F;var&#x2F;log&#x2F;secure|grep -E -o “(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?).(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)”|uniq -c<br>爆破的字典是什么？<br>grep “Failed password” &#x2F;var&#x2F;log&#x2F;secure|perl -e ‘while($_&#x3D;&lt;&gt;){ &#x2F;for(.*?) from&#x2F;; print “$1\n”;}’|uniq -c|sort -nr<br>登录成功的IP有哪些：<br>grep “Accepted “ &#x2F;var&#x2F;log&#x2F;secure | awk ‘{print $11}’ | sort | uniq -c | sort -nr | more<br>登录成功的日期、用户名、IP：<br>grep “Accepted “ &#x2F;var&#x2F;log&#x2F;secure | awk ‘{print $1,$2,$3,$9,$11}’</p>
+</blockquote>
+
+    </article>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%A6%96%E5%85%88%E8%AF%B4%E6%98%8E%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">首先说明：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%83%BD%E6%9C%89%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">服务器都有什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mysql%E5%86%85%E5%AE%B9%E5%A4%8D%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">mysql内容复现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%AF%E5%8A%A8%E5%92%8C%E5%85%B3%E9%97%AD%E5%92%8C%E9%87%8D%E5%90%AFmysql%E6%9C%8D%E5%8A%A1"><span class="toc-number">3.1.</span> <span class="toc-text">启动和关闭和重启mysql服务</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8Bmysql%E5%AF%86%E7%A0%81%E5%B9%B6%E4%BF%AE%E6%94%B9mysql%E5%AF%86%E7%A0%81"><span class="toc-number">3.2.</span> <span class="toc-text">查看mysql密码并修改mysql密码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%8C%E5%85%A8%E5%8D%B8%E8%BD%BD%E5%92%8C%E5%AE%89%E8%A3%85mysql%EF%BC%9A"><span class="toc-number">3.3.</span> <span class="toc-text">完全卸载和安装mysql：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mysql%E7%99%BB%E5%BD%95%E5%92%8C%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81%EF%BC%9A"><span class="toc-number">3.4.</span> <span class="toc-text">mysql登录和修改密码：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mysql%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%98%E5%8E%9F%EF%BC%9A"><span class="toc-number">3.5.</span> <span class="toc-text">mysql备份和还原：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%EF%BC%88%E7%A6%81%E6%AD%A2%E8%BF%9C%E7%A8%8B%E7%99%BB%E5%BD%95%EF%BC%89%EF%BC%9A"><span class="toc-number">3.6.</span> <span class="toc-text">数据库远程登录（禁止远程登录）：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#mysql%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E8%AF%BB%E5%86%99%E6%9D%83%E9%99%90%EF%BC%9A"><span class="toc-number">3.7.</span> <span class="toc-text">mysql权限管理读写权限：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#web%E5%AE%89%E5%85%A8%E5%A4%8D%E7%8E%B0%EF%BC%9A"><span class="toc-number">4.</span> <span class="toc-text">web安全复现：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AB%AF%E5%8F%A3%E6%89%AB%E6%8F%8F%E5%92%8C%E7%9B%AE%E5%BD%95%E6%89%AB%E6%8F%8F%E2%80%93"><span class="toc-number">5.</span> <span class="toc-text">端口扫描和目录扫描–</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#linux%E5%BA%94%E6%80%A5%E5%93%8D%E5%BA%94"><span class="toc-number">6.</span> <span class="toc-text">linux应急响应</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%9B%E7%A8%8B%E6%8E%92%E6%9F%A5%EF%BC%9A"><span class="toc-number">6.1.</span> <span class="toc-text">进程排查：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E6%8E%92%E6%9F%A5%EF%BC%9A"><span class="toc-number">6.2.</span> <span class="toc-text">文件排查：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E6%8E%92%E6%9F%A5%EF%BC%9A"><span class="toc-number">6.3.</span> <span class="toc-text">网络排查：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E6%8E%92%E6%9F%A5%EF%BC%9A"><span class="toc-number">6.4.</span> <span class="toc-text">用户排查：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%86%E5%8F%B2%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">6.5.</span> <span class="toc-text">历史命令：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96%E6%9F%A5%E8%AF%A2%EF%BC%88%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1-%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E9%A1%B9%E6%A3%80%E6%9F%A5-%EF%BC%89%EF%BC%9A"><span class="toc-number">6.6.</span> <span class="toc-text">持久化查询（定时任务-开机启动项检查-）：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#linux%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%EF%BC%9A"><span class="toc-number">7.</span> <span class="toc-text">linux日志分析：</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2022/07/22/搭建博客/">搭建博客</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const as = tocs ? tocs.querySelectorAll('a') : []
+    as.forEach(a => {
+      a.addEventListener('click', e => {
+        const href = decodeURIComponent(a.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      “庭有枇杷树，吾妻死之年所手植也，今已亭亭如盖矣” 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const commentDom = document.querySelector('.turn-comment')
+    if (commentDom) {
+      if (reg.test(path)) {
+        commentDom.classList.remove('hidden')
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"从你的全世界路过","artist":"麦城","url":"/music/从你的全世界路过.mp3","cover":"/imgs/%E7%8C%AA%E5%A4%B4.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  })
+</script></div>
+    </section>
+  </div>
+
+  <script>
+    function initScroll () {
+      const doc = document.documentElement
+      const pageHeight = doc.offsetHeight
+      const clientHeight = doc.clientHeight
+      NProgress.configure({
+        parent: 'body',
+        showSpinner: false,
+        minimum: 0,
+      })
+      document.addEventListener('scroll', () => {
+        const scrollTop = doc.scrollTop
+        let ratio = scrollTop / (pageHeight - clientHeight)
+        ratio = ratio > .99 ? .99999 : ratio
+        NProgress.set(ratio)
+      })
+    }
+
+
+    window.onload = function () {
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll()
+          if (['/', '/log/', '/link/', '/about/', '/tools/'].includes(location.pathname) && window.innerWidth > 1200) {
+            init('container') // 水波纹动画
+          }
+        }, 500)
+      }, 500)
+    }
+    
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {fragment:'#main-container', timeout:8000})
+    $(document).on('pjax:complete', function() {
+      initScroll()
+    })
+  </script>
+  
+  <script src="/js/water.js"></script>
+  
+</body>
+</html>
