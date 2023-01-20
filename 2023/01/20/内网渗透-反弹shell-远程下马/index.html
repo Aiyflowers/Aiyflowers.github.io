@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Aiyf | 内网渗透-反弹shell-远程下马 | Aiyf</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="/css/public.css" />
+  <link rel="stylesheet" href="/css/layout.css" />
+  <link rel="stylesheet" href="/css/iconfont.css" />
+  <link rel="stylesheet" href="/css/nprogress.css" />
+  <link rel="stylesheet" href="/css/APlayer.min.css" />
+  
+  <link rel="shortcut icon" href="/imgs/shortcut-icon.ico" type="image/x-icon">
+  
+  <script src="/js/nprogress.js"></script>
+
+  <script src="/js/APlayer.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/jquery.pjax.min.js"></script>
+  <script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+  <script>
+    document.title = `Aiyf | 内网渗透-反弹shell-远程下马`
+  </script>
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+<style>
+  .load {
+    width: 100%;
+    height: 100vh;
+    background-color: rgb(37, 35, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 9999;
+  }
+  .load-circle {
+    width: 80px;
+    height: 80px;
+    border: 8px solid orange;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotate 1s linear infinite;
+    filter: drop-shadow(0 0 3px orange);
+  }
+  .load-circle-inner {
+    width: 40px;
+    height: 40px;
+    border: 8px solid orange;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate-reverse .5s linear infinite;
+  }
+  .load-text {
+    margin-top: 20px;
+    font-size: 24px;
+    color: orange;
+    display: flex;
+  }
+  .load-text span {
+    margin: 0 5px;
+    text-shadow: 5px 5px 5px orange;
+    animation: move 1s linear infinite;
+  }
+  .load-text span:nth-child(1) {
+    animation-delay: -0.6s;
+  }
+  .load-text span:nth-child(2) {
+    animation-delay: -0.5s;
+  }
+  .load-text span:nth-child(3) {
+    animation-delay: -0.4s;
+  }
+  .load-text span:nth-child(4) {
+    animation-delay: -0.3s;
+  }
+  .load-text span:nth-child(5) {
+    animation-delay: -0.2s;
+  }
+  .load-text span:nth-child(6) {
+    animation-delay: -0.1s;
+  }
+  @keyframes rotate {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+  }
+  @keyframes rotate-reverse {
+    0% { transform: rotate(0); }
+    100% { transform: rotate(-360deg); }
+  }
+  @keyframes move {
+    0% { transform: translateY(0%) rotate(0) scale(1); }
+    20% { transform: translateY(20%) rotate(10deg) scale(1.2); }
+    80% { transform: translateY(-10%) rotate(-20deg) scale(.8);}
+    100% { transform: translateY(0) rotate(0) scale(1); }
+  }
+</style>
+<body>
+  <div id="load" class="load">
+    <div class="load-circle">
+      <div class="load-circle-inner"></div>
+    </div>
+    <p class="load-text">
+      <span>L</span>
+      <span>O</span>
+      <span>A</span>
+      <span>D</span>
+      <span>I</span>
+      <span>N</span>
+      <span>G</span>
+    </p>
+  </div>
+  <div id="container" class="container w-100 vh-100" style="display: none;">
+    <header class="header">
+  <div class="header-wrapper">
+    <div class="header-left">
+      <div class="header-search">
+        <input id="search-input" type="text" class="header-search--input" placeholder="请输入要检索的文章标题" />
+        <span id="search-btn" class="header-search--icon"><i class="iconfont icon-sousuo"></i></span>
+      </div>
+      <div id="search-layer" class="header-search--layer hidden">
+        <p class="title">
+          <span>以下是搜索内容：</span>
+          <span id="close-layer-btn">关闭</span>
+        </p>
+        <ul>
+        </ul>
+      </div>
+    </div>
+    <div class="header-right">
+      <ul class="header-menu">
+        <li>
+          <a href="/">
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+            <span class="header-menu--span">首页</span>
+          </a>
+        </li>
+        <li>
+          <a href="/log">
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+            <span class="header-menu--span">日志</span>
+          </a>
+        </li>
+        <li>
+          <a href="/link">
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+            <span class="header-menu--span">友情链接</span>
+          </a>
+        </li>
+        <li>
+          <a href="/about">
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+            <span class="header-menu--span">关于我</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const ipt = document.querySelector('#search-input')
+  const btn = document.querySelector('#search-btn')
+  const layer = document.querySelector('#search-layer')
+  const posts = JSON.parse(`[{"title":"搭建博客","path":"2022/07/22/搭建博客/"},{"title":"内网渗透-反弹shell-远程下马","path":"2023/01/20/内网渗透-反弹shell-远程下马/"}]`)
+  ipt.addEventListener('keyup', e => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  })
+  btn.addEventListener('click', () => {
+    handleSearch()
+  })
+
+  document.querySelector('#close-layer-btn').addEventListener('click', () => {
+    layer.classList.toggle('hidden')
+  })
+
+  function handleSearch() {
+    if (ipt.value.trim() === '') {
+      return
+    }
+    let html = ''
+    const targetPosts = posts.filter(post => post.title.includes(ipt.value))
+    targetPosts.forEach(post => {
+      html += `
+        <li>
+          <div>
+            <a href="/${post.path}">${post.title.replace(new RegExp(ipt.value), `<span>${ipt.value}</span>`)}</a>
+          </div>
+          <img src="${post.cover || '/imgs/default-cover.webp' }" />
+        </li>
+      `
+    })
+    if (html.trim () === '') {
+      html += '<p class="empty">没有搜索到内容</p>'
+    }
+    layer.querySelector('ul').innerHTML = html
+    layer.classList.remove('hidden')
+  }
+</script> 
+    <section id="main" class="main">
+      <div class="main-left-wrapper">
+<div class="main-left">
+  <div class="main-left--block">
+    <div class="main-left--info">
+      <img src="/imgs/avatar.jpg"" class="main-left--avatar" />
+      <div class="main-left--intro">
+        <p class="main-left--name">Aiyf</p>
+        <div class="main-left--tags">
+          <span class="main-left--tag">衰小孩</span>
+          <span class="main-left--tag">明非</span>
+        </div>
+      </div>
+    </div>
+  
+    <div>
+      <div class="main-left--motto">
+        <p>“孤独是人生常态”</p>
+        <p>“修短随化，情随事迁”</p>
+      </div>
+      <div class="main-left--github">
+        <span class="line"></span>
+        <a target="_blank" rel="noopener" href="https://github.com/Aiyflowers/Aiyflowers.github.io"><i class="logo iconfont icon-github-fill"></i></a>
+        <span class="line"></span>
+      </div>
+      <div class="main-left--statics">
+        <a href="/categories">
+          <div>
+            <span>0</span>
+            <span>分类</span>
+          </div>
+        </a>
+        <a href="/tags">
+          <div>
+            <span>1</span>
+            <span>标签</span>
+          </div>
+        </a>
+        <a href="/archives">
+          <div>
+            <span>2 </span>
+            <span>归档</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-left--block">
+    <ul class="main-left--menu">
+      
+        <li>
+          <a href="/">
+            <span class="header-menu--span">小站首页</span>
+            <i class="header-menu--icon iconfont icon-shouye"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/log">
+            <span class="header-menu--span">个人日志</span>
+            <i class="header-menu--icon iconfont icon-rizhi"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/link">
+            <span class="header-menu--span">友情链接</span>
+            <i class="header-menu--icon iconfont icon-youqinglianjie"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/about">
+            <span class="header-menu--span">关于自己</span>
+            <i class="header-menu--icon iconfont icon-guanyuwomen"></i>
+          </a>
+        </li>
+      
+        <li>
+          <a href="/tools">
+            <span class="header-menu--span">我的工具</span>
+            <i class="header-menu--icon iconfont icon-gongju"></i>
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+
+  <div class="main-left--block">
+    <div class="main-left--site">
+      <h5 class="main-left--title">
+        <span>站点信息</span>
+        <i class="iconfont icon-zhandian"></i>
+      </h5>
+      <p class="main-left--subtitle">
+        <span>文章数目：</span>
+        <span>2 篇</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>最近动态：</span>
+        <span>今天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>上线时间：</span>
+        <span>183天</span>
+      </p>
+      <p class="main-left--subtitle">
+        <span>当前版本：</span>
+        <span>v0.0.0</span>
+      </p>
+    </div>
+  </div>
+</div></div>
+      <div id="main-container" class="main-container">
+
+
+  <style>
+pre::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+  background-color:#F5F5F5;
+}
+/*定义滚动条轨道
+内阴影+圆角*/
+pre::-webkit-scrollbar-track {
+  background-color:#F5F5F5;
+}
+/*定义滑块
+内阴影+圆角*/
+pre::-webkit-scrollbar-thumb {
+  background-color: rgb(69, 83, 100);
+}
+
+pre:active {
+  background-color: rgb(81, 95, 116);
+}
+</style>
+
+<div class="article-container">
+  <div class="article">
+    <h1 class="article-title">内网渗透-反弹shell-远程下马</h1>
+    <div class="article-info">
+      <div class="article-info--item">
+        <div class="article-info--info">
+          <div class="article-info--categories">
+            <span>分类：</span>
+            
+          </div>
+          <div class="article-info--tags">
+            <span>标签：</span>
+            <a class="tag-link" href="/tags/0%E6%B0%AA%E7%99%BD%E5%AB%96%E6%8A%80%E5%B7%A7/" rel="tag">0氪白嫖技巧</a>
+          </div>
+          <p class="article-info--date">日期：2023-01-20 20:28:25</p>
+        </div>
+        <img src="/imgs/default-cover.webp" alt="" class="article-cover">
+      </div>
+    </div>
+    <article class="article-content">
+      <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>利用本机进行内网穿透和公网ip进行端口转发，进而监听本地端口，利用公网ip端口进行反弹shell，从而使得流量从公网ip端口转发到本地端口，从而被监听到。<br /><strong>优点：不需要任何钱！即使你没公网ip和公网服务器均可以完成，操作简单</strong><br />教程如下<br>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Zheng_Jay/article/details/121236608">https://blog.csdn.net/Zheng_Jay/article/details/121236608</a></p>
+<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><ol>
+<li>本机安装nc用来监听端口，安装教程省略，很简单，自己网上搜</li>
+<li>下载Natapp这个内网穿透软件，并注册账号。<br>:::info<br>网址：<a target="_blank" rel="noopener" href="https://natapp.cn/">https://natapp.cn/</a><br />1.点击购买免费隧道选择tcp隧道或者udp，或者两者都买。（假如你内网穿透只想用ip-port反弹shell，不需要用curl或者wget去下载马或者sh文件），最佳组合tcp隧道和web隧道。本文也将围绕这两个隧道<br />2.购买两个隧道后，去了解下natapp使用方式，官方网站会教你用，避免篇幅过长省略<br />3.然后在你了解了如何进行内网穿透后，就可以开始我们的操作了<br>:::</li>
+</ol>
+<h4 id="web服务购买隧道"><a href="#web服务购买隧道" class="headerlink" title="web服务购买隧道"></a>web服务购买隧道</h4><p><img src="https://img-blog.csdnimg.cn/img_convert/641a4b7ae53a3b93b52dcff3f9ebf46e.png" alt="image.png"><br />端口为apache服务绑定的端口，或者phpstudy占用的端口一般是80</p>
+<h4 id="tcp服务购买隧道"><a href="#tcp服务购买隧道" class="headerlink" title="tcp服务购买隧道"></a>tcp服务购买隧道</h4><p><img src="https://img-blog.csdnimg.cn/img_convert/58699c5eef495e3846b60da569fc24df.png" alt="image.png"><br />端口以后均可以更改，你随意设置。</p>
+<h3 id="利用tcp端口反弹shell"><a href="#利用tcp端口反弹shell" class="headerlink" title="利用tcp端口反弹shell"></a>利用tcp端口反弹shell</h3><ol>
+<li>先打开natapp利用tcp端口的token，这个你不会的话前期工作没做好。</li>
+</ol>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/02ec3873c936569e83c90dd833788520.png" alt="image.png"><br />看到这个页面，我们需要注意的是，端口转发的域名和端口<br />这个域名因为我们反弹shell需要公网ip和端口，所以我们需要先查询域名绑定的ip<br /><strong>这里需要注意的是：必须查询上面的域名ip，查询主站是不可以的。而且它的域名ip很可能会更换，一旦这个ip错误前功尽弃。</strong><br /><strong>一般我们这里查到的ip就是真实ip，他这个可能没有cdn防护啥的</strong><br />查询网站：<a target="_blank" rel="noopener" href="https://stool.chinaz.com/same?s=server.natappfree.cc">https://stool.chinaz.com/same?s=server.natappfree.cc</a><br /><img src="https://img-blog.csdnimg.cn/img_convert/fb02fdaaadc97aae33dfbaea21dce801.png" alt="image.png"></p>
+<p>有了这个ip我们还有端口，那么反弹shell顺理成章<br />2.先在本地终端进行监听8888端口<br /><img src="https://img-blog.csdnimg.cn/img_convert/ce269ea94f0551fb5357e49cc3246687.png" alt="image.png"><br />3.利用我们得到的公网ip和端口生成反弹shell语句在被攻击机上执行<br />反弹shell语句生成网站：<a target="_blank" rel="noopener" href="https://www.revshells.com/">https://www.revshells.com/</a><br /><img src="https://img-blog.csdnimg.cn/img_convert/8c37c7bbd7160bd94bee90601cd72c48.png" alt="image.png"><br />4.在被攻击机器上执行shell语句<br /><img src="https://img-blog.csdnimg.cn/img_convert/eb55242a7b5682cc49b4432e26c94ec4.png" alt="image.png"><br />成功！</p>
+<h3 id="利用web隧道反弹shell-下马"><a href="#利用web隧道反弹shell-下马" class="headerlink" title="利用web隧道反弹shell||下马"></a>利用web隧道反弹shell||下马</h3><p>原理：利用curl和wget等命令远程下载服务器上的文件<br />1.首先在你的www网站目录下放好你的木马或者一些sh文件<br />一般反弹shell的sh文件是随ip和port改变的，除非你有固定的公网ip和端口<br />我没有固定的公网ip和端口，因此我只在www目录下放置了一个木马和一个生成木马的shell文件，和需要随时更改的反弹shell文件。<br /><img src="https://img-blog.csdnimg.cn/img_convert/90a1c36a552326ee94a8df313bf37b4b.png" alt="image.png"><br />因为我懒得去每次翻找文件夹路径，所以做了index.html主页索引。看个人意愿，这都不重要<br />2.利用curl或者wget命令下载木马或者shell文件，再执行即可<br /><img src="https://img-blog.csdnimg.cn/img_convert/94261aca8ce1c1300ff147fff7aa8ab4.png" alt="image.png"><br />这个网址点击访问，寻找到你想要的路径。接着复制路径<br /><img src="https://img-blog.csdnimg.cn/img_convert/792779c7675e62195d0bc24d7a91d9cc.png" alt="image.png"><br />我这个更改了后就很舒服，不需要手动打路径再拼接啥的，文章最后放下我的index.html供参考<br />然后执行如下命令<br /><img src="https://img-blog.csdnimg.cn/img_convert/5e4fa727bb510ffa2b10fe6ed6dc8650.png" alt="image.png"><br />这里最好将命令url编码下。<br /><img src="https://img-blog.csdnimg.cn/img_convert/71abce8893672c3e98fcb7340dc4571e.png" alt="image.png"><br />成功下载到木马文件<br /><img src="https://img-blog.csdnimg.cn/img_convert/cf6d1f0bf93b9582af9744044037efcd.png" alt="image.png"><br />也可以执行。那就很舒服<br />再试下载sh文件<br /><img src="https://img-blog.csdnimg.cn/img_convert/4fc91b577efe5a74bff34c743c1c322e.png" alt="image.png"><br /><img src="https://img-blog.csdnimg.cn/img_convert/ab9bc828c697d617e060755621d3571d.png" alt="image.png"><br />执行下shell文件<br /><img src="https://img-blog.csdnimg.cn/img_convert/4a2dcdb379c10588e099bdabb4c8c4d1.png" alt="image.png"><br />shell文件成功写入一句话木马 （<br /><img src="https://img-blog.csdnimg.cn/img_convert/adf769e9a27cadbc8e10fd07f2c20c4f.png" alt="image.png"><br />成功！<br /><img src="https://img-blog.csdnimg.cn/img_convert/caa0c62277e85a5e2fa0f68fd26ff632.png" alt="image.png"><br />那么反弹shell的也是同理，我就不举例子了</p>
+<h3 id="我的index-html和网站大致文件路径布局"><a href="#我的index-html和网站大致文件路径布局" class="headerlink" title="我的index.html和网站大致文件路径布局"></a>我的index.html和网站大致文件路径布局</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/cd74d6dbce4dd914bde1a2b5196bcb91.png" alt="image.png"><br /><img src="https://img-blog.csdnimg.cn/img_convert/ff2f25758465ba59cfc89469662511be.png" alt="image.png"></p>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">></span></span>
+&lt;meta charset=UTF-8">
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">></span></span>Aiyf-messy-house<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>center</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>font</span> <span class="token attr-name">color</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span> <span class="token punctuation">"</span>BLUE<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Aiyflowers<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>font</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">></span></span>
+   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h3</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>https://aiyf.love/<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Aiyf-BLOG<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>kunshop.html<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>kun-shop<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/dvwa/login.php<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>DVWA<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/sqli-labs-master/<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>sqli-labs-master<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/pikachu/index.php<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>pikachu<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/upload-labs-master/<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>upload-labs-master<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/xss-labs-master/<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>xss-labs-master<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/shell/<span class="token punctuation">"</span></span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span> <span class="token special-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token value css language-css"><span class="token property">font-size</span><span class="token punctuation">:</span> larger<span class="token punctuation">;</span></span><span class="token punctuation">"</span></span></span><span class="token punctuation">></span></span>shell<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">></span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h3</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>center</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>shell目录下<br /><img src="https://img-blog.csdnimg.cn/img_convert/da7bfb0424aadb45a7389a118b76cb81.png" alt="image.png"></p>
+<pre class="line-numbers language-markup" data-language="markup"><code class="language-markup"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span><span class="token punctuation">></span></span>
+&lt;meta charset=UTF-8">
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">></span></span>
+      <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">></span></span>shell---Ku<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>center</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h2</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>font</span> <span class="token attr-name">color</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span> <span class="token punctuation">"</span>BLUE<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>Aiyflowers<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>font</span><span class="token punctuation">></span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h2</span><span class="token punctuation">></span></span>
+   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h3</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/shell/cmd.php<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>cmd.php<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/shell/upload_cmd.sh<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>upload_cmd.sh<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>a</span> <span class="token attr-name">href</span> <span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>/shell/bash-c.sh<span class="token punctuation">"</span></span><span class="token punctuation">></span></span>bash-c.sh<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>a</span><span class="token punctuation">></span></span>
+	<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>br</span><span class="token punctuation">></span></span>
+   <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h3</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>center</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><img src="https://img-blog.csdnimg.cn/img_convert/86081cd16d242461d187f72ee0fcd821.png" alt="image.png"><br />而我内网穿透出去后，127.0.0.1直接变为随机分配的域名，找路径就很舒服。</p>
+
+    </article>
+    
+  </div>
+  <div class="article-catelogue">
+    <div class="article-catelogue--wrapper">
+      <div class="catelogue catelogue-1">
+        <h3>目录</h3>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="toc-number">2.</span> <span class="toc-text">前期准备</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#web%E6%9C%8D%E5%8A%A1%E8%B4%AD%E4%B9%B0%E9%9A%A7%E9%81%93"><span class="toc-number">2.1.</span> <span class="toc-text">web服务购买隧道</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#tcp%E6%9C%8D%E5%8A%A1%E8%B4%AD%E4%B9%B0%E9%9A%A7%E9%81%93"><span class="toc-number">2.2.</span> <span class="toc-text">tcp服务购买隧道</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8tcp%E7%AB%AF%E5%8F%A3%E5%8F%8D%E5%BC%B9shell"><span class="toc-number">3.</span> <span class="toc-text">利用tcp端口反弹shell</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8web%E9%9A%A7%E9%81%93%E5%8F%8D%E5%BC%B9shell-%E4%B8%8B%E9%A9%AC"><span class="toc-number">4.</span> <span class="toc-text">利用web隧道反弹shell||下马</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%88%91%E7%9A%84index-html%E5%92%8C%E7%BD%91%E7%AB%99%E5%A4%A7%E8%87%B4%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84%E5%B8%83%E5%B1%80"><span class="toc-number">5.</span> <span class="toc-text">我的index.html和网站大致文件路径布局</span></a></li></ol>
+      </div>
+      
+        <div class="catelogue catelogue-2">
+           
+          
+            <p>
+              <span>下一篇</span>
+              <a href="/2022/07/22/搭建博客/">搭建博客</a>
+            </p>
+          
+        </div>
+      
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  $(document).on('pjax:complete', function() {
+    const tocs = document.querySelector('.toc')
+    const as = tocs ? tocs.querySelectorAll('a') : []
+    as.forEach(a => {
+      a.addEventListener('click', e => {
+        const href = decodeURIComponent(a.href)
+        href.search(/#(.*)/)
+        const id = RegExp.$1
+        const target = document.querySelector('#' + id)
+        const top = target.offsetTop
+        document.documentElement.scrollTo({
+          top: top - 100,
+          behavior: 'smooth'
+        })
+        e.preventDefault()
+      })
+    })
+  })
+</script> 
+
+</div>
+      <div class="main-right-wrapper"><div class="main-right">
+  <div class="main-right--board">
+    <div class="main-right--title">
+      <h5>公告栏</h5>
+      <i class="iconfont icon-gonggao"></i>
+    </div>
+    <div class="main-right--content">
+      “庭有枇杷树，吾妻死之年所手植也，今已亭亭如盖矣” 
+    </div>
+  </div>
+
+  <div id="aplayer" class="main-right--music"></div>
+
+  <div class="operate-items">
+    <div class="operate-item backtop">
+      <i class="iconfont icon-huidaodingbu"></i>
+      <span>回到顶部</span>
+    </div>
+    
+  </div>
+
+  <div class="main-right--site">
+    <div class="main-right--power">
+      <p>Power By <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/">Hexo</a>.</p>
+      <p>Theme：<a target="_blank" rel="noopener" href="https://github.com/Aizener/hexo-theme-cola">Cola.</a></p>
+    </div>
+    <p class="main-right--refer"> </p>
+  </div>
+</div>
+
+<script>
+  function setOperateItem () {
+    const reg = /\d{4}\/\d{2}\/\d{2}\/.+/
+    const path = location.pathname
+    const commentDom = document.querySelector('.turn-comment')
+    if (commentDom) {
+      if (reg.test(path)) {
+        commentDom.classList.remove('hidden')
+      } else {
+        commentDom.classList.add('hidden')
+      }
+    }
+  }
+
+  setOperateItem()
+  const musics = JSON.parse(`[{"name":"从你的全世界路过","artist":"麦城","url":"/music/从你的全世界路过.mp3","cover":"/imgs/%E7%8C%AA%E5%A4%B4.jpg"}]`)
+  const ap = new APlayer({
+    container: document.querySelector('#aplayer'),
+    audio: musics,
+  })
+
+  $(document).on('pjax:complete', function() {
+    setOperateItem()
+  })
+
+  document.querySelector('.backtop').addEventListener('click', () => {
+    document.documentElement.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+  })
+  const dom = document.querySelector('.turn-comment')
+  dom && dom.addEventListener('click', () => {
+    const commentDom = document.querySelector('.comments-intro')
+    if (!commentDom) return
+    const top = commentDom.offsetTop, height = commentDom.offsetHeight
+    document.documentElement.scrollTo({
+      top: top - 2 * height,
+      behavior: 'smooth'
+    })
+  })
+</script></div>
+    </section>
+  </div>
+
+  <script>
+    function initScroll () {
+      const doc = document.documentElement
+      const pageHeight = doc.offsetHeight
+      const clientHeight = doc.clientHeight
+      NProgress.configure({
+        parent: 'body',
+        showSpinner: false,
+        minimum: 0,
+      })
+      document.addEventListener('scroll', () => {
+        const scrollTop = doc.scrollTop
+        let ratio = scrollTop / (pageHeight - clientHeight)
+        ratio = ratio > .99 ? .99999 : ratio
+        NProgress.set(ratio)
+      })
+    }
+
+
+    window.onload = function () {
+      setTimeout(() => {
+        $('#load').slideUp()
+        $('#container').slideToggle()
+        setTimeout(() => {
+          initScroll()
+          if (['/', '/log/', '/link/', '/about/', '/tools/'].includes(location.pathname) && window.innerWidth > 1200) {
+            init('container') // 水波纹动画
+          }
+        }, 500)
+      }, 500)
+    }
+    
+    // 对所有链接跳转事件绑定pjax容器container
+    $(document).pjax('a[target!=_blank]', '#main-container', {fragment:'#main-container', timeout:8000})
+    $(document).on('pjax:complete', function() {
+      initScroll()
+    })
+  </script>
+  
+  <script src="/js/water.js"></script>
+  
+</body>
+</html>
